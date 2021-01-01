@@ -4,35 +4,83 @@
 version: "3.8"
 
 services:
-    prometheus:
-        build:
-            context: prometheus
-        networks:
-            - eth_default
-        ports:
-            - 9090:9090
-        volumes:
-            - prometheus-data:/prometheus
-            - type: bind
-              source: ./scrape-targets
-              target: /prometheus/targets
-        restart: always
-    grafana:
-        build:
-            context: grafana
-        networks:
-            - eth_default
-        ports:
-            - 3000:3000
-        volumes:
-            - grafana-data:/var/lib/grafana
-        restart: always
+  # eth1
+  geth:
+    build: geth/
+    expose:
+      - "8545"
+      - "8546"
+      - "30303"
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./geth/mainnet:/.mainnet
+    command: >-
+      --rpc  --rpcapi eth,net,web3 --rpcaddr 0.0.0.0 --rpcport 8545 --rpcvhosts=*
+      --syncmode fast --datadir /.mainnet --verbosity 3
 
-networks:
-    eth_default:
-        external: true
+  # eth2
+  lighthouse-base:
+    image: sigp/lighthouse
+    volumes:
+      - .lighthouse:/root/.lighthouse
+      - ./validator_keys:/root/validator_keys
+    command: echo ok
+
+  beacon:
+    extends: lighthouse-base
+    ports:
+      - 9000:9000
+      - 9000:9000/udp
+      - 5052:5052
+      - 5053:5053
+    restart: always
+    command: >-
+      lighthouse --network mainnet beacon
+        --staking
+        --eth1-endpoints https://mainnet.infura.io/v3/***REMOVED***
+        --http --http-address 0.0.0.0 --http-port 5052
+        --metrics --metrics-address 0.0.0.0 --metrics-port 5053
+
+  validator:
+    extends: lighthouse-base
+    restart: always
+    links:
+      - beacon
+    ports:
+      - 5062:5062
+      - 5064:5064
+    command: >-
+      lighthouse --network mainnet validator_client
+        --beacon-nodes http://beacon:5052/
+        --http --http-port 5062
+        --metrics --metrics-address 0.0.0.0 --metrics-port 5064
+
+  # metrics
+  prometheus:
+    build:
+      context: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus-data:/prometheus
+      - type: bind
+        source: ./scrape-targets
+        target: /prometheus/targets
+    restart: always
+
+  grafana:
+    build:
+      context: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: always
 
 volumes:
-    grafana-data:
-    prometheus-data:
-    targets:
+  grafana-data:
+  prometheus-data:
+  targets:
+
+# dc run --rm lighthouse-base lighthouse --network mainnet account validator import --directory /root/validator_keys

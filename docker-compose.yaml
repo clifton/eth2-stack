@@ -19,6 +19,15 @@ services:
       --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api eth,net,web3 --ws.origins '*'
       --graphql --graphql.corsdomain '*' --graphql.vhosts '*'
       --syncmode fast --datadir /.mainnet --verbosity 3 --nousb
+    restart: always
+
+  openethereum:
+    build: openethereum/
+    ports:
+      - 8545:8545
+      - 8546:8546
+      - 30303:30303
+      - 30303:30303/udp
 
   # eth2
   lighthouse-base:

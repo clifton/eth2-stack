@@ -38,7 +38,7 @@ RUN addgroup -g 1000 openethereum \
 
 USER openethereum
 WORKDIR /home/openethereum
-RUN mkdir -p /home/openethereum/.local/share/io.parity.ethereum/
+RUN mkdir -p /home/openethereum/.local/share/io.parity.ethereum/ /home/openethereum/.eth
 COPY --chown=openethereum:openethereum --from=builder /openethereum/target/release/openethereum ./
 
 #      secret

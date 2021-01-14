@@ -23,11 +23,30 @@ services:
 
   openethereum:
     build: openethereum/
+    volumes:
+      - ./openethereum/.eth:/home/openethereum/.eth
     ports:
-      - 8545:8545
-      - 8546:8546
-      - 30303:30303
-      - 30303:30303/udp
+      - 8300:8300       # metrics
+      - 8545:8545       # http rpc
+      - 8546:8546       # ws rpc
+      - 30303:30303     # p2p
+      - 30303:30303/udp # p2p
+    # todo: fat-db
+    user: root
+    command: >
+      --mode=active --chain=ethereum
+      --no-config --logging=info
+      --base-path=/home/openethereum/.eth/data
+      --db-path=/home/openethereum/.eth/db
+      --ui-path=/home/openethereum/.eth/ui
+      --interface=0.0.0.0 --port=30303
+      --min-peers=25 --max-peers=50 --snapshot-peers=50
+      --jsonrpc-interface=0.0.0.0 --jsonrpc-port=8545
+      --jsonrpc-experimental --jsonrpc-apis=all
+      --jsonrpc-hosts=all --jsonrpc-cors=all
+      --ws-interface=0.0.0.0 --ws-port=8546 --ws-apis=all
+      --ws-origins=all --ws-hosts=all
+      --metrics --metrics-interface=0.0.0.0 --metrics-port=8300
 
   # eth2
   lighthouse-base:

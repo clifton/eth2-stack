@@ -5,21 +5,21 @@ version: "3.8"
 
 services:
   # eth1
-  geth:
-    build: geth/
-    ports:
-      - 8545:8545
-      - 8546:8546
-      - 30303:30303
-      - 30303:30303/udp
-    volumes:
-      - ./geth/mainnet:/.mainnet
-    command: >-
-      --http --http.addr 0.0.0.0 --http.port 8545 --http.api eth,net,web3 --http.corsdomain '*' --http.vhosts '*'
-      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api eth,net,web3 --ws.origins '*'
-      --graphql --graphql.corsdomain '*' --graphql.vhosts '*'
-      --syncmode fast --datadir /.mainnet --verbosity 3 --nousb
-    restart: always
+  # geth:
+  #   build: geth/
+  #   ports:
+  #     - 8545:8545
+  #     - 8546:8546
+  #     - 30303:30303
+  #     - 30303:30303/udp
+  #   volumes:
+  #     - ./geth/mainnet:/.mainnet
+  #   command: >-
+  #     --http --http.addr 0.0.0.0 --http.port 8545 --http.api eth,net,web3 --http.corsdomain '*' --http.vhosts '*'
+  #     --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api eth,net,web3 --ws.origins '*'
+  #     --graphql --graphql.corsdomain '*' --graphql.vhosts '*'
+  #     --syncmode fast --datadir /.mainnet --verbosity 3 --nousb
+  #   restart: always
 
   openethereum:
     build: openethereum/
@@ -31,8 +31,7 @@ services:
       - 8546:8546       # ws rpc
       - 30303:30303     # p2p
       - 30303:30303/udp # p2p
-    # todo: fat-db
-    user: root
+    restart: always
     command: >
       --mode=active --chain=ethereum
       --no-config --logging=info

@@ -58,10 +58,10 @@ services:
   beacon:
     extends: lighthouse-base
     ports:
-      - 9000:9000
-      - 9000:9000/udp
-      - 5052:5052
-      - 5053:5053
+      - 5052:5052      # http rpc
+      - 5053:5053      # metrics
+      - 9000:9000      # p2p
+      - 9000:9000/udp  # p2p
     restart: always
     command: >-
       lighthouse --network mainnet beacon
@@ -76,8 +76,8 @@ services:
     links:
       - beacon
     ports:
-      - 5062:5062
-      - 5064:5064
+      - 5062:5062  # http rpc -- listens only on 127.0.0.1
+      - 5064:5064  # http metrics
     command: >-
       lighthouse --network mainnet validator_client
         --beacon-nodes http://beacon:5052/

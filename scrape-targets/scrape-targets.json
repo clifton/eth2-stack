@@ -5,7 +5,8 @@
     },
     "targets": [
       "beacon:5053",
-      "validator:5064"
+      "validator:5064",
+      "openethereum:8300"
     ]
   }
 ]

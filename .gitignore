@@ -1,3 +1,4 @@
 geth/mainnet
 openethereum/.eth
+.lighthouse/
 .env

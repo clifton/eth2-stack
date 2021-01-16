@@ -1,4 +1,8 @@
-# Lighthouse Metrics
+# ETH2 stack
+
+openethereum + lighthouse + metrics
+
+## Lighthouse Metrics
 
 [![metrics.png](https://i.postimg.cc/Jh7rxtgp/metrics.png)](https://postimg.cc/4YMRN4Xc)
 

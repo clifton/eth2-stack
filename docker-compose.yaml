@@ -57,6 +57,8 @@ services:
 
   beacon:
     extends: lighthouse-base
+    environment:
+      - ETH1_BACKUPS="${ETH1_BACKUPS}"
     ports:
       - 5052:5052      # http rpc
       - 5053:5053      # metrics
@@ -66,7 +68,7 @@ services:
     command: >-
       lighthouse --network mainnet beacon
         --staking
-        --eth1-endpoints https://mainnet.infura.io/v3/***REMOVED***
+        --eth1-endpoints http://openethereum:8545,$ETH1_BACKUPS
         --http --http-address 0.0.0.0 --http-port 5052
         --metrics --metrics-address 0.0.0.0 --metrics-port 5053
 

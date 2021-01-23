@@ -1,5 +1,5 @@
 # https://github.com/openethereum/openethereum/blob/main/scripts/docker/alpine/Dockerfile
-FROM alpine:edge AS builder
+FROM alpine:3.12.3 AS builder
 
 # show backtraces
 ENV RUST_BACKTRACE 1
@@ -15,12 +15,12 @@ RUN apk add --no-cache \
   git
 
 RUN git config --global advice.detachedHead false \
-    && git clone --branch v3.1.0 --depth 1 https://github.com/openethereum/openethereum /openethereum
+    && git clone --branch v3.1.1 --depth 1 https://github.com/openethereum/openethereum /openethereum
 WORKDIR /openethereum
 RUN cargo build --release --features final --verbose
 RUN strip target/release/openethereum
 
-FROM alpine:edge
+FROM alpine:3.12.3
 
 # show backtraces
 ENV RUST_BACKTRACE 1

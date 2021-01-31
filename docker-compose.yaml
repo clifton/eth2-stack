@@ -67,7 +67,7 @@ services:
     restart: always
     command: >-
       lighthouse --network mainnet beacon
-        --staking
+        --staking --validator-monitor-auto
         --eth1-endpoints http://openethereum:8545,$ETH1_BACKUPS
         --http --http-address 0.0.0.0 --http-port 5052
         --metrics --metrics-address 0.0.0.0 --metrics-port 5053

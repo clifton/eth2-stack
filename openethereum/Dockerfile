@@ -15,7 +15,7 @@ RUN apk add --no-cache \
   git
 
 RUN git config --global advice.detachedHead false \
-    && git clone --branch v3.1.1 --depth 1 https://github.com/openethereum/openethereum /openethereum
+    && git clone --branch v3.2.0 --depth 1 https://github.com/openethereum/openethereum /openethereum
 WORKDIR /openethereum
 RUN cargo build --release --features final --verbose
 RUN strip target/release/openethereum

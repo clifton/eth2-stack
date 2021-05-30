@@ -5,47 +5,25 @@ version: "3.8"
 
 services:
   # eth1
-  # geth:
-  #   build: geth/
-  #   ports:
-  #     - 8545:8545
-  #     - 8546:8546
-  #     - 30303:30303
-  #     - 30303:30303/udp
-  #   volumes:
-  #     - ./geth/mainnet:/.mainnet
-  #   command: >-
-  #     --http --http.addr 0.0.0.0 --http.port 8545 --http.api eth,net,web3 --http.corsdomain '*' --http.vhosts '*'
-  #     --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api eth,net,web3 --ws.origins '*'
-  #     --graphql --graphql.corsdomain '*' --graphql.vhosts '*'
-  #     --syncmode fast --datadir /.mainnet --verbosity 3 --nousb
-  #   restart: always
-
-  openethereum:
-    build: openethereum/
-    volumes:
-      - ./openethereum/.eth:/home/openethereum/.eth
+  geth:
+    build: geth/
     ports:
-      - 8300:8300       # metrics
-      - 8545:8545       # http rpc
-      - 8546:8546       # ws rpc
-      - 30303:30303     # p2p
-      - 30303:30303/udp # p2p
+      - 8545:8545
+      - 8546:8546
+      - 30303:30303
+      - 30303:30303/udp
+      - 8300:8300
+    volumes:
+      - ./geth/mainnet:/.mainnet
+    command: >-
+      --mainnet
+      --http --http.addr=0.0.0.0 --http.port=8545 --http.api=eth,net,web3
+      --http.corsdomain='*' --http.vhosts='*'
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=8300
+      --ws --ws.addr=0.0.0.0 --ws.port=8546 --ws.api=eth,net,web3 --ws.origins='*'
+      --graphql --graphql.corsdomain='*' --graphql.vhosts='*'
+      --syncmode=fast --datadir=/.mainnet --verbosity=3 --nousb
     restart: always
-    command: >
-      --mode=active --chain=ethereum
-      --no-config --logging=info
-      --base-path=/home/openethereum/.eth/data
-      --db-path=/home/openethereum/.eth/db
-      --ui-path=/home/openethereum/.eth/ui
-      --interface=0.0.0.0 --port=30303
-      --min-peers=25 --max-peers=50 --snapshot-peers=50
-      --jsonrpc-interface=0.0.0.0 --jsonrpc-port=8545
-      --jsonrpc-experimental --jsonrpc-apis=all
-      --jsonrpc-hosts=all --jsonrpc-cors=all
-      --ws-interface=0.0.0.0 --ws-port=8546 --ws-apis=all
-      --ws-origins=all --ws-hosts=all
-      --metrics --metrics-interface=0.0.0.0 --metrics-port=8300
 
   # eth2
   lighthouse-base:
@@ -60,15 +38,15 @@ services:
     environment:
       - ETH1_BACKUPS="${ETH1_BACKUPS}"
     ports:
-      - 5052:5052      # http rpc
-      - 5053:5053      # metrics
-      - 9000:9000      # p2p
-      - 9000:9000/udp  # p2p
+      - 5052:5052 # http rpc
+      - 5053:5053 # metrics
+      - 9000:9000 # p2p
+      - 9000:9000/udp # p2p
     restart: always
     command: >-
       lighthouse --network mainnet beacon
         --staking --validator-monitor-auto
-        --eth1-endpoints http://openethereum:8545,$ETH1_BACKUPS
+        --eth1-endpoints http://geth:8545,$ETH1_BACKUPS
         --http --http-address 0.0.0.0 --http-port 5052
         --metrics --metrics-address 0.0.0.0 --metrics-port 5053
 
@@ -78,8 +56,8 @@ services:
     links:
       - beacon
     ports:
-      - 5062:5062  # http rpc -- listens only on 127.0.0.1
-      - 5064:5064  # http metrics
+      - 5062:5062 # http rpc -- listens only on 127.0.0.1
+      - 5064:5064 # http metrics
     command: >-
       lighthouse --network mainnet validator_client
         --beacon-nodes http://beacon:5052/
@@ -112,5 +90,4 @@ volumes:
   grafana-data:
   prometheus-data:
   targets:
-
 # dc run --rm lighthouse-base lighthouse --network mainnet account validator import --directory /root/validator_keys

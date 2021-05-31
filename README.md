@@ -1,11 +1,11 @@
 # ETH2 stack
 
-openethereum + lighthouse + metrics
+geth + lighthouse + metrics
 
 ## Usage
 
 1. enable grafana/prometheus `dc up -d grafana prometheus`
-2. sync eth1 client `dc up -d openethereum`
+2. sync eth1 client `dc up -d geth`
 3. sync eth2 beacon `dc up -d beacon`
 4. generate validator keys and put in `./validator_keys`
 5. import validator keys: `dc run --rm lighthouse-base lighthouse --network mainnet account validator import --directory /root/validator_keys`

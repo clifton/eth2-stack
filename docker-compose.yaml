@@ -36,7 +36,7 @@ services:
   beacon:
     extends: lighthouse-base
     environment:
-      - ETH1_BACKUPS="${ETH1_BACKUPS}"
+      - ETH1_ENDPOINTS="${ETH1_ENDPOINTS}"
     ports:
       - 5052:5052 # http rpc
       - 5053:5053 # metrics
@@ -46,7 +46,7 @@ services:
     command: >-
       lighthouse --network mainnet beacon
         --staking --validator-monitor-auto
-        --eth1-endpoints http://geth:8545,$ETH1_BACKUPS
+        --eth1-endpoints $ETH1_ENDPOINTS
         --http --http-address 0.0.0.0 --http-port 5052
         --metrics --metrics-address 0.0.0.0 --metrics-port 5053
 
@@ -55,12 +55,14 @@ services:
     restart: always
     links:
       - beacon
+    environment:
+      - BEACON_ENDPOINTS="${BEACON_ENDPOINTS}"
     ports:
       - 5062:5062 # http rpc -- listens only on 127.0.0.1
       - 5064:5064 # http metrics
     command: >-
       lighthouse --network mainnet validator_client
-        --beacon-nodes http://beacon:5052/
+        --beacon-nodes $BEACON_ENDPOINTS
         --http --http-port 5062
         --metrics --metrics-address 0.0.0.0 --metrics-port 5064
 

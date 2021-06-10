@@ -4,12 +4,22 @@ geth + lighthouse + metrics
 
 ## Usage
 
-1. enable grafana/prometheus `dc up -d grafana prometheus`
-2. sync eth1 client `dc up -d geth`
-3. sync eth2 beacon `dc up -d beacon`
-4. generate validator keys and put in `./validator_keys`
-5. import validator keys: `dc run --rm lighthouse-base lighthouse --network mainnet account validator import --directory /root/validator_keys`
-6. start validator `dc up -d validator`
+
+1. _optional_ create [alchemy](https://www.alchemy.com/) and [infura](https://infura.io/) eth1/eth2 api endpoints.
+2. create a new `.env` file and add the following
+
+```env
+ETH1_ENDPOINTS=http://geth:8545,https://eth-mainnet.alchemyapi.io/v2/<YOUR ALCHEMY KEY>,https://mainnet.infura.io/v3/<YOUR INFURA KEY>
+BEACON_ENDPOINTS=http://beacon:5052,https://<INFURA KEY>:<INFURA SECRET>@eth2-beacon-mainnet.infura.io
+```
+
+3. run `dc up -d`
+4. that's it! beacon and validators will use the backup eth1/eth2 apis until your node is synced
+
+## Launching a new validator
+
+1. generate validator keys via [eth2 launchpaid](https://launchpad.ethereum.org/en/)
+2. import validator keys: `dc run --rm lighthouse-base lighthouse --network mainnet account validator import --directory /root/validator_keys`
 
 ## Migrating validator to a new machine
 

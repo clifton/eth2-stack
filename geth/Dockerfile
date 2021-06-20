@@ -6,7 +6,7 @@ FROM golang:1.16-alpine as builder
 RUN apk add --no-cache make gcc musl-dev linux-headers git
 
 RUN git clone --depth 1 \
-	--branch v1.10.3 \
+	--branch v1.10.4 \
 	https://github.com/ethereum/go-ethereum.git \
 	/go-ethereum
 RUN cd /go-ethereum && make geth
